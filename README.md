@@ -79,7 +79,7 @@ The following ASIC design flow was implemented:
 ├── testbenches/
 │
 └── Team10_EE671_Course_Project1_Report.pdf
-
+```
 ## Characterization Metrics
 
 ### Combinational Cells
