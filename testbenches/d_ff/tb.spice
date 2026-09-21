@@ -1,0 +1,19 @@
+.lib /usr/local/share/pdk/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+.include pex.spice
+
+VVDD VDD 0 1.8
+VVSS VSS 0 0
+
+VCLK CLK 0 PULSE(0 1.8 2n 0.1n 0.1n 5n 10n)
+VDIN DIN 0 PULSE(0 1.8 1n 0.1n 0.1n 8n 16n)
+
+XDUT DIN CLK Q VDD VSS d_ff
+
+.tran 50p 100n
+
+.control
+run
+plot v(Q)+8 v(DIN)+4 v(CLK)
+.endc
+
+.end

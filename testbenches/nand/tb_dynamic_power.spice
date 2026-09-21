@@ -1,0 +1,100 @@
+* ==========================================================
+* Dynamic power characterization  (pin A and pin B)
+* Cell: out = NOT( (NOT A) AND B )   [NAND with inverted A input]
+*   A toggles -> B held HIGH -> out follows A      (positive unate)
+*   B toggles -> A held LOW  -> out = NOT B        (negative unate)
+* Power = Energy per output transition / input period (T = 8 ns)
+* Run with:  ngspice -b dp_nand.spice
+* ==========================================================
+
+.lib /usr/local/share/pdk/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+.include project1_nand_pex.spice
+
+.param VDDV  = 1.8
+.param SLEW  = 10p
+.param CLOAD = 0.5f
+* SELB = 0 -> A toggles, B held high | SELB = 1 -> B toggles, A held low
+.param SELB  = 0
+
+Vsup vdd 0 DC {VDDV}
+
+* PULSE(V1 V2 TD TR TF PW PER)
+VA A 0 PULSE(0 {VDDV*(1-SELB)} 1n {SLEW} {SLEW} 4n 8n)
+VB B 0 PULSE({VDDV*(1-SELB)} {VDDV} 1n {SLEW} {SLEW} 4n 8n)
+
+* Port order matches: .subckt project1_nand vdd A vss B out
+XDUT vdd A 0 B out project1_nand
+
+Cload out 0 {CLOAD}
+
+* Input timeline (T = 8n):
+*   W1: 1n        -> 5n + SLEW : toggling input RISES
+*   W2: 5n + SLEW -> 9n        : toggling input FALLS
+.tran 1p 9.5n
+
+.control
+set wr_singlescale
+echo "PIN,SLEW_ps,LOAD_fF,P_RISE_nW,P_FALL_nW,VOUT_END_W1,VOUT_END_W2" > nand_power.csv
+
+let T = 8e-9
+
+foreach selb 0 1
+
+    set pinname = A
+    if $selb = 1
+        set pinname = B
+    end
+    alterparam SELB = $selb
+
+    foreach slew 10e-12 100e-12 1000e-12
+
+        alterparam SLEW = $slew
+
+        foreach load 0.5e-15 10e-15 100e-15
+
+            alterparam CLOAD = $load
+            reset
+            run
+
+            let pwr = -v(vdd)*i(vsup)
+
+            let t_w1_0 = 1e-9
+            let t_w1_1 = 5e-9 + $slew
+            let t_w2_0 = 5e-9 + $slew
+            let t_w2_1 = 9e-9
+
+            meas tran E_W1 INTEG pwr FROM=$&t_w1_0 TO=$&t_w1_1
+            meas tran E_W2 INTEG pwr FROM=$&t_w2_0 TO=$&t_w2_1
+
+            * Sanity check: settled output level at the end of each window
+            meas tran VO_W1 FIND v(out) AT=4.9e-9
+            meas tran VO_W2 FIND v(out) AT=8.9e-9
+
+            * Map windows to OUTPUT edges
+            *   pin A (positive unate): input rise -> out rise
+            *   pin B (negative unate): input rise -> out fall
+            if $selb = 0
+                let E_RISE_OUT = E_W1
+                let E_FALL_OUT = E_W2
+            else
+                let E_RISE_OUT = E_W2
+                let E_FALL_OUT = E_W1
+            end
+
+            let P_RISE_NW = E_RISE_OUT / T * 1e9
+            let P_FALL_NW = E_FALL_OUT / T * 1e9
+
+            let slew_ps = $slew * 1e12
+            let load_fF = $load * 1e15
+
+            echo "$pinname,$&slew_ps,$&load_fF,$&P_RISE_NW,$&P_FALL_NW,$&VO_W1,$&VO_W2" >> nand_power.csv
+            echo "PIN=$pinname SLEW=$&slew_ps ps LOAD=$&load_fF fF  Prise=$&P_RISE_NW nW  Pfall=$&P_FALL_NW nW  Vout(W1,W2)=$&VO_W1,$&VO_W2"
+
+        end
+    end
+end
+
+quit
+.endc
+
+.end

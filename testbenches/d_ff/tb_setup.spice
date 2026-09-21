@@ -1,0 +1,85 @@
+
+
+.lib /usr/local/share/pdk/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+
+.include dff_pex.spice
+
+.param DS=10p
+.param CLKSLEW=10p
+.param CL=10f
+
+* VARIABLE TO SWEEP
+.param TSETUP=130p
+
+VDD vdd 0 1.8
+VSS vss 0 0
+
+
+VCLK CLK 0 PULSE(
++ 0 1.8
++ 5n
++ {CLKSLEW}
++ {CLKSLEW}
++ 5n
++ 10n
+)
+
+
+VDIN DIN 0 PULSE(
++ 0 1.8
++ {15n-TSETUP}
++ {DS}
++ {DS}
++ 20n
++ 40n
+)
+
+
+XDFF DIN CLK Q vdd vss d_ff
+
+*--------------------------------------------------------
+* LOAD
+*--------------------------------------------------------
+
+CLOAD Q 0 {CL}
+
+*--------------------------------------------------------
+* SIMULATION
+*--------------------------------------------------------
+
+.tran 1p 25n
+
+.control
+
+run
+
+plot v(DIN) v(CLK) v(Q)
+
+*--------------------------------------------------------
+* 50% CROSSINGS
+*--------------------------------------------------------
+
+meas tran tD   WHEN v(DIN)=0.9 RISE=1
+meas tran tCLK WHEN v(CLK)=0.9 RISE=2
+meas tran tQ   WHEN v(Q)=0.9 RISE=1
+
+*--------------------------------------------------------
+* ACTUAL SETUP
+*--------------------------------------------------------
+
+let setup_actual = tCLK - tD
+
+*--------------------------------------------------------
+* CLK->Q
+*--------------------------------------------------------
+
+let tcq = tQ - tCLK
+
+echo "========================="
+print setup_actual
+print tcq
+echo "========================="
+
+.endc
+
+.end

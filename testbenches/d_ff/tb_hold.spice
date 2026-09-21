@@ -1,0 +1,45 @@
+* Testbench for Positive Edge D Flip Flop - HOLD TIME
+
+.lib /foss/pdks/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+.include dff_pex.spice
+
+.param VDDVAL=1.8
+.param clk_slew=10p
+.param ip_slew=10p
+
+* CHANGE THIS
+.param th=-130p
+
+
+* Power supplies
+VVDD VDD 0 {VDDVAL}
+VVSS VSS 0 0
+
+
+* Clock
+VCLK CLK 0 PULSE(0 {VDDVAL} 10n {clk_slew} {clk_slew} 5n 20n)
+
+
+* D
+* Starts HIGH
+* Falls th after the rising clock edge
+* Then remains LOW
+
+VDIN DIN 0 PULSE({VDDVAL} 0 {10n+th} {ip_slew} {ip_slew} 20n 40n)
+
+
+* DFF
+XDUT DIN CLK Q VDD VSS d_ff
+
+
+.tran 1p 30n
+
+
+.control
+run
+
+plot V(Q) V(DIN)+4 V(CLK)+6
+
+.endc
+
+.end

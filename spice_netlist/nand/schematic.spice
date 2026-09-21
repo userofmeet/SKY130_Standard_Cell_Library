@@ -1,0 +1,12 @@
+.subckt nand_abar_b vdd A vss B out A_b
+
+xm_inv_p A_b A vdd vdd sky130_fd_pr__pfet_01v8 l=0.15 w=1.23 as=0.369 ad=0.369 ps=3.06 pd=3.06
+xm_inv_n A_b A vss vss sky130_fd_pr__nfet_01v8 l=0.15 w=0.84 as=0.252 ad=0.252 ps=2.28 pd=2.28
+
+xm01 out A_b vdd vdd sky130_fd_pr__pfet_01v8 l=0.15 w=1.23 as=0.369 ad=0.369 ps=3.06 pd=3.06
+xm02 out B   vdd vdd sky130_fd_pr__pfet_01v8 l=0.15 w=1.23 as=0.369 ad=0.369 ps=3.06 pd=3.06
+
+xm03 out A_b int vss sky130_fd_pr__nfet_01v8 l=0.15 w=0.84 as=0.252 ad=0.252 ps=2.28 pd=2.28
+xm04 int B   vss vss sky130_fd_pr__nfet_01v8 l=0.15 w=0.84 as=0.252 ad=0.252 ps=2.28 pd=2.28
+
+.ends nand_abar_b

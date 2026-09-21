@@ -1,0 +1,51 @@
+* Schematic netlist for LVS - transmission-gate master-slave D flip-flop
+* Technology: sky130A
+* Matches topology of extracted d_ff.ext exactly (22 devices, verified 1:1)
+
+.subckt d_ff DIN CLK Q VDD VSS
+
+* --- Clock inverter: CLK -> CLKB ---
+XI_CLKB_P CLKB CLK VDD VDD sky130_fd_pr__pfet_01v8 w=1.26 l=0.15 ad=0.378 pd=3.12 as=0.378 ps=3.12
+XI_CLKB_N CLKB CLK VSS VSS sky130_fd_pr__nfet_01v8 w=0.42 l=0.15 ad=0.126 pd=1.44 as=0.126 ps=1.44
+
+* --- Input inverter: DIN -> DB ---
+XI_DB_P DB DIN VDD VDD sky130_fd_pr__pfet_01v8 w=1.26 l=0.15 ad=0.378 pd=3.12 as=0.378 ps=3.12
+XI_DB_N DB DIN VSS VSS sky130_fd_pr__nfet_01v8 w=0.42 l=0.15 ad=0.126 pd=1.44 as=0.126 ps=1.44
+
+* --- Master input TG: DB -> M  (transparent when CLK=0) ---
+XTG1_P M CLK  DB VDD sky130_fd_pr__pfet_01v8 w=1.26 l=0.15 ad=0.378 pd=3.12 as=0.378 ps=3.12
+XTG1_N M CLKB DB VSS sky130_fd_pr__nfet_01v8 w=0.42 l=0.15 ad=0.126 pd=1.44 as=0.126 ps=1.44
+
+* --- Master inverter 1: M -> MB ---
+XI_MB_P MB M VDD VDD sky130_fd_pr__pfet_01v8 w=1.26 l=0.15 ad=0.378 pd=3.12 as=0.378 ps=3.12
+XI_MB_N MB M VSS VSS sky130_fd_pr__nfet_01v8 w=0.42 l=0.15 ad=0.126 pd=1.44 as=0.126 ps=1.44
+
+* --- Master inverter 2: MB -> MFB ---
+XI_MFB_P MFB MB VDD VDD sky130_fd_pr__pfet_01v8 w=1.26 l=0.15 ad=0.378 pd=3.12 as=0.378 ps=3.12
+XI_MFB_N MFB MB VSS VSS sky130_fd_pr__nfet_01v8 w=0.42 l=0.15 ad=0.126 pd=1.44 as=0.126 ps=1.44
+
+* --- Master feedback TG: MFB -> M  (transparent when CLK=1, closes the latch) ---
+XTG2_P M CLKB MFB VDD sky130_fd_pr__pfet_01v8 w=1.26 l=0.15 ad=0.378 pd=3.12 as=0.378 ps=3.12
+XTG2_N M CLK  MFB VSS sky130_fd_pr__nfet_01v8 w=0.42 l=0.15 ad=0.126 pd=1.44 as=0.126 ps=1.44
+
+* --- Slave input TG: MB -> S  (transparent when CLK=1) ---
+XTG3_P S CLKB MB VDD sky130_fd_pr__pfet_01v8 w=1.26 l=0.15 ad=0.378 pd=3.12 as=0.378 ps=3.12
+XTG3_N S CLK  MB VSS sky130_fd_pr__nfet_01v8 w=0.42 l=0.15 ad=0.126 pd=1.44 as=0.126 ps=1.44
+
+* --- Slave inverter 1: S -> SB ---
+XI_SB_P SB S VDD VDD sky130_fd_pr__pfet_01v8 w=1.26 l=0.15 ad=0.378 pd=3.12 as=0.378 ps=3.12
+XI_SB_N SB S VSS VSS sky130_fd_pr__nfet_01v8 w=0.42 l=0.15 ad=0.126 pd=1.44 as=0.126 ps=1.44
+
+* --- Slave inverter 2: SB -> SFB ---
+XI_SFB_P SFB SB VDD VDD sky130_fd_pr__pfet_01v8 w=1.26 l=0.15 ad=0.378 pd=3.12 as=0.378 ps=3.12
+XI_SFB_N SFB SB VSS VSS sky130_fd_pr__nfet_01v8 w=0.42 l=0.15 ad=0.126 pd=1.44 as=0.126 ps=1.44
+
+* --- Slave feedback TG: SFB -> S  (transparent when CLK=0, closes the latch) ---
+XTG4_P S CLK  SFB VDD sky130_fd_pr__pfet_01v8 w=1.26 l=0.15 ad=0.378 pd=3.12 as=0.378 ps=3.12
+XTG4_N S CLKB SFB VSS sky130_fd_pr__nfet_01v8 w=0.42 l=0.15 ad=0.126 pd=1.44 as=0.126 ps=1.44
+
+* --- Output inverter: SB -> Q ---
+XI_Q_P Q SB VDD VDD sky130_fd_pr__pfet_01v8 w=1.26 l=0.15 ad=0.378 pd=3.12 as=0.378 ps=3.12
+XI_Q_N Q SB VSS VSS sky130_fd_pr__nfet_01v8 w=0.42 l=0.15 ad=0.126 pd=1.44 as=0.126 ps=1.44
+
+.ends

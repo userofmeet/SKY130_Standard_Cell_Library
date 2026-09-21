@@ -1,0 +1,107 @@
+.lib /foss/pdks/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+
+.subckt project1_nand vdd A vss B out A_b
+X0 out A_b a_1488_n84# vss sky130_fd_pr__nfet_01v8 ad=0.0798 pd=0.8 as=0.1428 ps=1.31 w=0.42 l=0.15
+**devattr s=6384,320 d=3192,160
+X1 out A_b vdd vdd sky130_fd_pr__pfet_01v8 ad=0.4674 pd=3.22 as=0.4674 ps=3.22 w=1.23 l=0.15
+**devattr s=18696,644 d=18696,644
+X2 a_1488_n84# B vss vss sky130_fd_pr__nfet_01v8 ad=0.1428 pd=1.31 as=0.1064 ps=1.06667 w=0.42 l=0.15
+**devattr s=3192,160 d=6384,320
+X3 A_b A vss vss sky130_fd_pr__nfet_01v8 ad=0.1596 pd=1.6 as=0.1064 ps=1.06667 w=0.42 l=0.15
+**devattr s=6384,320 d=6384,320
+X4 A_b A vdd vdd sky130_fd_pr__pfet_01v8 ad=0.4674 pd=3.22 as=0.4674 ps=3.22 w=1.23 l=0.15
+**devattr s=18696,644 d=18696,644
+X5 vss B a_1488_n84# vss sky130_fd_pr__nfet_01v8 ad=0.1064 pd=1.06667 as=0.1428 ps=1.31 w=0.42 l=0.15
+**devattr s=5040,204 d=3192,160
+X6 vdd B out vdd sky130_fd_pr__pfet_01v8 ad=0.4674 pd=3.22 as=0.4674 ps=3.22 w=1.23 l=0.15
+**devattr s=18696,644 d=18696,644
+X7 a_1488_n84# A_b out vss sky130_fd_pr__nfet_01v8 ad=0.1428 pd=1.31 as=0.0798 ps=0.8 w=0.42 l=0.15
+**devattr s=3192,160 d=5040,204
+C0 out B 0.03874f
+C1 a_1488_n84# vdd 0.06288f
+C2 vdd A 0.08741f
+C3 out vdd 0.19544f
+C4 a_1488_n84# A 0.00138f
+C5 out a_1488_n84# 0.08702f
+C6 out A 0
+C7 A_b B 0.0249f
+C8 vdd A_b 0.18193f
+C9 a_1488_n84# A_b 0.08276f
+C10 vdd B 0.09653f
+C11 A_b A 0.06117f
+C12 out A_b 0.09783f
+C13 a_1488_n84# B 0.05385f
+C14 out vss 0.24557f
+C15 vdd vss 1.27392f
+C16 a_1488_n84# vss 0.81643f
+.ends
+
+
+Vdd vdd 0 1.8
+VA A 0 0
+VB B 0 0
+
+Xnand vdd A 0 B out A_b project1_nand
+
+.control
+
+op
+
+let Idd00 = -i(Vdd)
+let Pstatic00 = 1.8*Idd00
+
+echo "========================================"
+echo "STATIC POWER: A=0, B=0"
+echo "========================================"
+print Idd00
+print Pstatic00
+
+
+alter VA 1.8
+alter VB 0
+op
+
+let Idd10 = -i(Vdd)
+let Pstatic10 = 1.8*Idd10
+
+echo "========================================"
+echo "STATIC POWER: A=1, B=0"
+echo "========================================"
+print Idd10
+print Pstatic10
+
+
+alter VA 0
+alter VB 1.8
+op
+
+let Idd01 = -i(Vdd)
+let Pstatic01 = 1.8*Idd01
+
+echo "========================================"
+echo "STATIC POWER: A=0, B=1"
+echo "========================================"
+print Idd01
+print Pstatic01
+
+
+alter VA 1.8
+alter VB 1.8
+op
+
+let Idd11 = -i(Vdd)
+let Pstatic11 = 1.8*Idd11
+
+echo "========================================"
+echo "STATIC POWER: A=1, B=1"
+echo "========================================"
+print Idd11
+print Pstatic11
+
+
+echo "========================================"
+echo "ALL 4 CASES COMPLETE"
+echo "========================================"
+
+.endc
+.end

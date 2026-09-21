@@ -1,0 +1,20 @@
+.lib /usr/local/share/pdk/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+
+.include dff_pex.spice
+
+VVDD VDD 0 1.8
+VVSS VSS 0 0
+
+VD DIN 0 0
+VCLK CLK 0 0
+
+XDUT DIN CLK Q VDD VSS d_ff
+
+.op
+
+.measure op pstatic PARAM='abs(v(VDD)*i(VVDD))'
+.control
+run
+print abs(v(VDD)*i(VVDD))
+.endc
+.end

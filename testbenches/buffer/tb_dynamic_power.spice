@@ -1,0 +1,92 @@
+* Rise/Fall dynamic power characterization - project1_bufferckt (PEX)
+
+.lib /usr/local/share/pdk/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+
+* ---------------- PEX netlist ----------------
+.subckt project1_bufferckt vdd vss int in out
+X0 vss in int vss sky130_fd_pr__nfet_01v8 ad=0.0798 pd=0.8 as=0.1596 ps=1.6 w=0.42 l=0.15
+**devattr s=6384,320 d=3192,160
+X1 vdd in int vdd sky130_fd_pr__pfet_01v8 ad=0.2337 pd=1.61 as=0.4674 ps=3.22 w=1.23 l=0.15
+**devattr s=18696,644 d=9348,322
+X2 out int vss vss sky130_fd_pr__nfet_01v8 ad=0.2394 pd=1.98 as=0.0798 ps=0.8 w=0.42 l=0.15
+**devattr s=3192,160 d=9576,396
+X3 out int vdd vdd sky130_fd_pr__pfet_01v8 ad=0.6396 pd=3.5 as=0.2337 ps=1.61 w=1.23 l=0.15
+**devattr s=9348,322 d=25584,700
+C0 in vdd 0.0671f
+C1 out vdd 0.06999f
+C2 out in 0.0041f
+C3 int vdd 0.11573f
+C4 in int 0.14349f
+C5 out int 0.08094f
+C6 out vss 0.37429f
+C7 vdd vss 0.76028f
+.ends
+
+* ---------------- Testbench ----------------
+* Supply (source name differs from node name to avoid confusion)
+Vsup vdd 0 DC 1.8
+
+* Input: 0 -> 1.8 at t=1n, high for 4n, falls at ~6n, period 10n
+* (rise event: ~1n-5n, fall event: ~6n-10n; slew/load overwritten in loop)
+Vin in 0 pulse(0 1.8 1n 10p 10p 4n 10n)
+
+* DUT: port order = vdd vss int in out
+Xdut vdd 0 mid in out project1_bufferckt
+
+Cload out 0 0.5f
+
+.tran 1p 10n
+
+.control
+let vddv = 1.8
+
+echo "=== RISE / FALL POWER CHARACTERIZATION (PEX) ===" > results.txt
+echo "slew_ps | load_fF | E_rise_tot_fJ | E_rise_int_fJ | P_rise_20-80_nW | E_fall_fJ | P_fall_80-20_nW" >> results.txt
+echo "=== RISE / FALL POWER CHARACTERIZATION (PEX) ==="
+echo "slew_ps | load_fF | E_rise_tot_fJ | E_rise_int_fJ | P_rise_20-80_nW | E_fall_fJ | P_fall_80-20_nW"
+
+foreach slew 10e-12 100e-12 1000e-12
+  foreach cl 0.5e-15 10e-15 100e-15
+
+    alter vin pulse = [ 0 1.8 1n $slew $slew 4n 10n ]
+    alter cload = $cl
+    run
+
+    * ---- output transition timing (20% / 80% of 1.8 V) ----
+    meas tran t20r WHEN v(out)=0.36 RISE=1
+    meas tran t80r WHEN v(out)=1.44 RISE=1
+    meas tran t80f WHEN v(out)=1.44 FALL=1
+    meas tran t20f WHEN v(out)=0.36 FALL=1
+
+    * ---- RISE: charge drawn from supply over the whole event ----
+    meas tran q_rise    INTEG i(vsup) FROM=0.9n TO=5n
+    meas tran q_rise_w  INTEG i(vsup) FROM=$&t20r TO=$&t80r
+
+    * ---- FALL: charge drawn from supply over the whole event ----
+    meas tran q_fall    INTEG i(vsup) FROM=5n TO=9.9n
+    meas tran q_fall_w  INTEG i(vsup) FROM=$&t80f TO=$&t20f
+
+    * i(vsup) is negative when sourcing current -> E = -Q * Vdd
+    let e_rise_fj     = -q_rise * vddv * 1e15
+    * subtract external load energy (CL*Vdd^2 drawn from supply on rise)
+    let e_rise_int_fj = e_rise_fj - $cl * vddv * vddv * 1e15
+    let p_rise_nw     = -q_rise_w * vddv / 10 * 1e9
+
+    let e_fall_fj     = -q_fall * vddv * 1e15
+    let p_fall_nw     = -q_fall_w * vddv / 10 * 1e9
+
+    let slew_ps = $slew * 1e12
+    let cl_ff   = $cl * 1e15
+
+    echo "$&slew_ps | $&cl_ff | $&e_rise_fj | $&e_rise_int_fj | $&p_rise_nw | $&e_fall_fj | $&p_fall_nw"
+    echo "$&slew_ps | $&cl_ff | $&e_rise_fj | $&e_rise_int_fj | $&p_rise_nw | $&e_fall_fj | $&p_fall_nw" >> results.txt
+
+  end
+end
+
+echo ""
+echo "Liberty: use E_rise_int_fJ for rise_power and E_fall_fJ for fall_power (internal_power, energy units)."
+echo "Results also saved to results.txt"
+.endc
+
+.end

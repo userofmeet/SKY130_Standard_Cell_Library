@@ -1,0 +1,26 @@
+* Clock Input Capacitance
+
+.lib /usr/local/share/pdk/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+.include dff_pex.spice
+
+VVDD VDD 0 1.8
+VVSS VSS 0 0
+
+VD D 0 0
+
+VCLK CLK 0 PULSE(1.8 0 1n 10p 10p 5n 20n)
+
+XDUT D CLK Q VDD VSS d_ff
+
+.tran 0.1p 10n
+
+.measure tran q_clk INTEG i(VCLK) FROM=1n TO=1.05n
+.measure tran C_clk PARAM='abs(q_clk)/1.8'
+.control
+run
+print q_clk
+print C_clk
+plot i(VCLK)
+.endc
+
+.end

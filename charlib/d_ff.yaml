@@ -1,0 +1,41 @@
+settings:
+
+    lib_name: d_ff
+
+    temperature: 25
+
+    units:
+
+        time: ns
+        capacitive_load: pF
+
+    named_nodes:
+
+        primary_power:
+
+            name: VDD
+            voltage: 1.8
+
+        primary_ground:
+
+            name: VSS
+            voltage: 0
+
+    cell_defaults:
+        netlist: mycell.spice
+        models:
+            - /usr/local/share/pdk/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+            
+cells:
+    d_ff:               
+        inputs: [DIN]
+        outputs: ['Q']
+        clock: posedge CLK
+        state:
+            - IQ = DIN
+        functions:
+            - Q <= IQ
+        data_slews:  [0.5] 
+        clock_slews: [0.5]
+        loads:       [0.1] 
+        plots: none

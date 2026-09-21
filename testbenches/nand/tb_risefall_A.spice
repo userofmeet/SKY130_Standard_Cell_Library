@@ -1,0 +1,173 @@
+.lib /foss/pdks/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+
+.param slew=10p
+.param Cload=0.5f
+
+.subckt project1_nand vdd A vss B out A_b
+X0 out A_b a_1488_n84# vss sky130_fd_pr__nfet_01v8 ad=0.0798 pd=0.8 as=0.1428 ps=1.31 w=0.42 l=0.15
+**devattr s=6384,320 d=3192,160
+X1 out A_b vdd vdd sky130_fd_pr__pfet_01v8 ad=0.4674 pd=3.22 as=0.4674 ps=3.22 w=1.23 l=0.15
+**devattr s=18696,644 d=18696,644
+X2 a_1488_n84# B vss vss sky130_fd_pr__nfet_01v8 ad=0.1428 pd=1.31 as=0.1064 ps=1.06667 w=0.42 l=0.15
+**devattr s=3192,160 d=6384,320
+X3 A_b A vss vss sky130_fd_pr__nfet_01v8 ad=0.1596 pd=1.6 as=0.1064 ps=1.06667 w=0.42 l=0.15
+**devattr s=6384,320 d=6384,320
+X4 A_b A vdd vdd sky130_fd_pr__pfet_01v8 ad=0.4674 pd=3.22 as=0.4674 ps=3.22 w=1.23 l=0.15
+**devattr s=18696,644 d=18696,644
+X5 vss B a_1488_n84# vss sky130_fd_pr__nfet_01v8 ad=0.1064 pd=1.06667 as=0.1428 ps=1.31 w=0.42 l=0.15
+**devattr s=5040,204 d=3192,160
+X6 vdd B out vdd sky130_fd_pr__pfet_01v8 ad=0.4674 pd=3.22 as=0.4674 ps=3.22 w=1.23 l=0.15
+**devattr s=18696,644 d=18696,644
+X7 a_1488_n84# A_b out vss sky130_fd_pr__nfet_01v8 ad=0.1428 pd=1.31 as=0.0798 ps=0.8 w=0.42 l=0.15
+**devattr s=3192,160 d=5040,204
+C0 out B 0.03874f
+C1 a_1488_n84# vdd 0.06288f
+C2 vdd A 0.08741f
+C3 out vdd 0.19544f
+C4 a_1488_n84# A 0.00138f
+C5 out a_1488_n84# 0.08702f
+C6 out A 0
+C7 A_b B 0.0249f
+C8 vdd A_b 0.18193f
+C9 a_1488_n84# A_b 0.08276f
+C10 vdd B 0.09653f
+C11 A_b A 0.06117f
+C12 out A_b 0.09783f
+C13 a_1488_n84# B 0.05385f
+C14 out vss 0.24557f
+C15 vdd vss 1.27392f
+C16 a_1488_n84# vss 0.81643f
+.ends
+
+Vdd vdd 0 1.8
+VA A 0 PULSE(1.8 0 1n {slew} {slew} 2n 4n)
+VB B 0 1.8
+
+Xnand vdd A 0 B out A_b project1_nand
+
+Cload out 0 {Cload}
+
+.control
+
+alterparam slew=10p
+alterparam Cload=0.5f
+reset
+tran 1p 8n
+meas tran trise1 trig V(out) val=0.36 rise=1 targ V(out) val=1.44 rise=1
+meas tran tfall1 trig V(out) val=1.44 fall=1 targ V(out) val=0.36 fall=1
+echo "========================================"
+echo "CASE 1: Slew=10ps, Cload=0.5fF"
+echo "Rise time:"
+print trise1
+echo "Fall time:"
+print tfall1
+
+alterparam slew=10p
+alterparam Cload=10f
+reset
+tran 1p 8n
+meas tran trise2 trig V(out) val=0.36 rise=1 targ V(out) val=1.44 rise=1
+meas tran tfall2 trig V(out) val=1.44 fall=1 targ V(out) val=0.36 fall=1
+echo "========================================"
+echo "CASE 2: Slew=10ps, Cload=10fF"
+echo "Rise time:"
+print trise2
+echo "Fall time:"
+print tfall2
+
+alterparam slew=10p
+alterparam Cload=100f
+reset
+tran 1p 8n
+meas tran trise3 trig V(out) val=0.36 rise=1 targ V(out) val=1.44 rise=1
+meas tran tfall3 trig V(out) val=1.44 fall=1 targ V(out) val=0.36 fall=1
+echo "========================================"
+echo "CASE 3: Slew=10ps, Cload=100fF"
+echo "Rise time:"
+print trise3
+echo "Fall time:"
+print tfall3
+
+alterparam slew=100p
+alterparam Cload=0.5f
+reset
+tran 1p 8n
+meas tran trise4 trig V(out) val=0.36 rise=1 targ V(out) val=1.44 rise=1
+meas tran tfall4 trig V(out) val=1.44 fall=1 targ V(out) val=0.36 fall=1
+echo "========================================"
+echo "CASE 4: Slew=100ps, Cload=0.5fF"
+echo "Rise time:"
+print trise4
+echo "Fall time:"
+print tfall4
+
+alterparam slew=100p
+alterparam Cload=10f
+reset
+tran 1p 8n
+meas tran trise5 trig V(out) val=0.36 rise=1 targ V(out) val=1.44 rise=1
+meas tran tfall5 trig V(out) val=1.44 fall=1 targ V(out) val=0.36 fall=1
+echo "========================================"
+echo "CASE 5: Slew=100ps, Cload=10fF"
+echo "Rise time:"
+print trise5
+echo "Fall time:"
+print tfall5
+
+alterparam slew=100p
+alterparam Cload=100f
+reset
+tran 1p 8n
+meas tran trise6 trig V(out) val=0.36 rise=1 targ V(out) val=1.44 rise=1
+meas tran tfall6 trig V(out) val=1.44 fall=1 targ V(out) val=0.36 fall=1
+echo "========================================"
+echo "CASE 6: Slew=100ps, Cload=100fF"
+echo "Rise time:"
+print trise6
+echo "Fall time:"
+print tfall6
+
+alterparam slew=1000p
+alterparam Cload=0.5f
+reset
+tran 1p 12n
+meas tran trise7 trig V(out) val=0.36 rise=1 targ V(out) val=1.44 rise=1
+meas tran tfall7 trig V(out) val=1.44 fall=1 targ V(out) val=0.36 fall=1
+echo "========================================"
+echo "CASE 7: Slew=1000ps, Cload=0.5fF"
+echo "Rise time:"
+print trise7
+echo "Fall time:"
+print tfall7
+
+alterparam slew=1000p
+alterparam Cload=10f
+reset
+tran 1p 12n
+meas tran trise8 trig V(out) val=0.36 rise=1 targ V(out) val=1.44 rise=1
+meas tran tfall8 trig V(out) val=1.44 fall=1 targ V(out) val=0.36 fall=1
+echo "========================================"
+echo "CASE 8: Slew=1000ps, Cload=10fF"
+echo "Rise time:"
+print trise8
+echo "Fall time:"
+print tfall8
+
+alterparam slew=1000p
+alterparam Cload=100f
+reset
+tran 1p 12n
+meas tran trise9 trig V(out) val=0.36 rise=1 targ V(out) val=1.44 rise=1
+meas tran tfall9 trig V(out) val=1.44 fall=1 targ V(out) val=0.36 fall=1
+echo "========================================"
+echo "CASE 9: Slew=1000ps, Cload=100fF"
+echo "Rise time:"
+print trise9
+echo "Fall time:"
+print tfall9
+
+echo "========================================"
+echo "ALL 9 CASES COMPLETE"
+echo "========================================"
+
+.endc

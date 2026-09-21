@@ -1,0 +1,85 @@
+VERSION 5.7 ;
+  NOWIREEXTENSIONATPIN ON ;
+  DIVIDERCHAR "/" ;
+  BUSBITCHARS "[]" ;
+MACRO project1_nand
+  CLASS BLOCK ;
+  FOREIGN project1_nand ;
+  ORIGIN -6.080 0.840 ;
+  SIZE 4.720 BY 3.030 ;
+  PIN vdd
+    ANTENNADIFFAREA 1.931100 ;
+    PORT
+      LAYER nwell ;
+        RECT 6.080 0.430 10.270 2.190 ;
+      LAYER li1 ;
+        RECT 6.260 2.020 10.060 2.190 ;
+        RECT 6.260 1.330 6.550 2.020 ;
+        RECT 7.440 1.330 7.730 2.020 ;
+        RECT 9.350 1.360 9.630 2.020 ;
+        RECT 9.800 1.360 10.060 2.020 ;
+      LAYER met1 ;
+        RECT 6.080 1.860 10.270 2.190 ;
+        RECT 9.350 1.360 9.630 1.860 ;
+    END
+  END vdd
+  PIN A
+    ANTENNAGATEAREA 0.247500 ;
+    PORT
+      LAYER li1 ;
+        RECT 6.270 0.110 6.640 0.430 ;
+    END
+  END A
+  PIN vss
+    ANTENNADIFFAREA 0.550200 ;
+    PORT
+      LAYER li1 ;
+        RECT 6.260 -0.840 6.590 -0.060 ;
+        RECT 9.270 -0.420 9.600 -0.060 ;
+        RECT 9.280 -0.590 9.590 -0.420 ;
+        RECT 10.330 -0.590 10.710 -0.060 ;
+        RECT 9.270 -0.830 10.710 -0.590 ;
+      LAYER met1 ;
+        RECT 6.150 -0.840 10.800 -0.560 ;
+    END
+  END vss
+  PIN B
+    ANTENNAGATEAREA 0.310500 ;
+    PORT
+      LAYER li1 ;
+        RECT 8.730 0.110 9.100 0.430 ;
+    END
+  END B
+  PIN out
+    ANTENNADIFFAREA 1.094400 ;
+    PORT
+      LAYER li1 ;
+        RECT 8.040 1.330 9.040 1.620 ;
+        RECT 8.040 0.000 8.320 1.330 ;
+        RECT 7.990 -0.360 8.320 0.000 ;
+      LAYER met1 ;
+        RECT 8.030 0.285 8.320 0.585 ;
+    END
+  END out
+  PIN A_b
+    ANTENNAGATEAREA 0.310500 ;
+    ANTENNADIFFAREA 0.627000 ;
+    PORT
+      LAYER li1 ;
+        RECT 6.840 0.430 7.170 1.270 ;
+        RECT 6.840 0.110 7.820 0.430 ;
+        RECT 6.840 -0.360 7.170 0.110 ;
+    END
+  END A_b
+  OBS
+      LAYER li1 ;
+        RECT 7.440 -0.530 7.770 -0.060 ;
+        RECT 8.640 -0.530 8.970 -0.070 ;
+        RECT 9.830 -0.420 10.160 -0.060 ;
+        RECT 7.440 -0.720 8.970 -0.530 ;
+      LAYER met1 ;
+        RECT 8.640 -0.420 10.160 -0.060 ;
+  END
+END project1_nand
+END LIBRARY
+

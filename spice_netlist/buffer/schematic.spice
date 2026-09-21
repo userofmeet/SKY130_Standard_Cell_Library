@@ -1,0 +1,70 @@
+* Strength1 Buffer DC Analysis
+* Netlist
+
+.lib /foss/pdks/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+
+.subckt bufferckt vdd vss int in out
+
+xmo1 int in vss vss sky130_fd_pr__nfet_01v8 l=0.15 w=0.42 as=0.126 ad=0.126 ps=1.44 pd=1.44
+xmo2 int in vdd vdd sky130_fd_pr__pfet_01v8 l=0.15 w=1.23 as=0.369 ad=0.369 ps=3.06 pd=3.06
+
+xmo3 out int vss vss sky130_fd_pr__nfet_01v8 l=0.15 w=0.42 as=0.126 ad=0.126 ps=1.44 pd=1.44
+xmo4 out int vdd vdd sky130_fd_pr__pfet_01v8 l=0.15 w=1.23 as=0.369 ad=0.369 ps=3.06 pd=3.06
+
+.ends bufferckt
+
+Vdd vdd 0 DC 1.8
+
+Xbuf vdd 0 int in out project1_bufferckt
+
+V1 in 0 DC 0 PULSE(0 1.8 0 20p 20p 2n 4n)
+
+.control
+
+dc V1 0 1.8 0.01
+
+plot V(in) V(out) xlabel Vin(V) ylabel Vout(V) title CMOS_Buffer_VTC
+
+let diff=V(out)-V(in)
+meas dc Vm find V(in) when diff=0
+
+let slope=deriv(V(out))
+plot slope
+
+meas dc Vil find V(in) when slope=1 cross=1
+meas dc Vol find V(out) when slope=1 cross=1
+meas dc Vih find V(in) when slope=1 cross=2
+meas dc Voh find V(out) when slope=1 cross=2
+
+let Nmh=Voh-Vih
+let Nml=Vil-Vol
+
+echo "Static characteristics of Buffer"
+print Vm
+print Vil
+print Vih
+print Vol
+print Voh
+print Nmh
+print Nml
+
+tran 1p 8n
+
+plot V(in) V(out) xlabel Time(ns) ylabel Voltage(V) title Transient_Response
+
+meas tran tr trig V(out) val=0.36 rise=1 targ V(out) val=1.44 rise=1
+meas tran tf trig V(out) val=1.44 fall=1 targ V(out) val=0.36 fall=1
+meas tran tplh trig V(in) val=0.9 rise=1 targ V(out) val=0.9 rise=1
+meas tran tphl trig V(in) val=0.9 fall=1 targ V(out) val=0.9 fall=1
+let tp=(tphl+tplh)/2
+
+echo "Dynamic characteristics of Buffer"
+print tr
+print tf
+print tphl
+print tplh
+print tp
+
+.endc
+
+.end

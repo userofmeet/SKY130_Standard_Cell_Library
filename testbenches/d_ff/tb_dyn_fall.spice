@@ -1,0 +1,135 @@
+*========================================================
+* DFF PEX - DYNAMIC FALL POWER
+*
+* CL = output capacitance
+* DS = D/input slew
+* CLK slew = fixed at 10 ps
+*
+* D: 1 -> 0
+* Target positive CLK edge causes Q: 1 -> 0
+*
+* Power is calculated over ONE COMPLETE CLOCK CYCLE
+*
+* Pavg = Ecycle / Tclock
+*========================================================
+
+.lib /foss/pdks/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+
+.include dff_pex.spice
+
+*--------------------------------------------------------
+* PARAMETERS
+*--------------------------------------------------------
+
+.param CL=100f
+.param DS=1000p
+
+*--------------------------------------------------------
+* SUPPLY
+*--------------------------------------------------------
+
+VDD vdd 0 1.8
+VSS vss 0 0
+
+*--------------------------------------------------------
+* D INPUT
+*
+* Initially D = 1
+*
+* D 50% crossing is fixed at 5 ns for all DS values.
+*
+* Start time = 5ns - DS/2
+*
+* DS = 10 ps:
+*       D starts at 4.995 ns
+*
+* DS = 100 ps:
+*       D starts at 4.950 ns
+*
+* DS = 1000 ps:
+*       D starts at 4.500 ns
+*
+* D remains LOW throughout the measured clock cycle.
+*--------------------------------------------------------
+
+VDIN DIN 0 PULSE(1.8 0 {5n-DS/2} {DS} {DS} 20n 30n)
+
+*--------------------------------------------------------
+* CLOCK
+*
+* First rising edge  = 2 ns
+*   -> D = 1
+*   -> Q becomes HIGH
+*
+* Target rising edge = 12 ns
+*   -> D = 0
+*   -> Q falls
+*
+* Clock slew = 10 ps
+* Clock period = 10 ns
+*--------------------------------------------------------
+
+VCLK CLK 0 PULSE(0 1.8 2n 10p 10p 3n 10n)
+
+*--------------------------------------------------------
+* DFF
+*--------------------------------------------------------
+
+XDFF DIN CLK Q vdd vss d_ff
+
+*--------------------------------------------------------
+* OUTPUT LOAD
+*--------------------------------------------------------
+
+CLOAD Q 0 {CL}
+
+*--------------------------------------------------------
+* TRANSIENT SIMULATION
+*--------------------------------------------------------
+
+.tran 1p 23n
+
+.control
+
+run
+
+*--------------------------------------------------------
+* PLOT
+*--------------------------------------------------------
+
+plot V(DIN) V(CLK) V(Q)
+
+*--------------------------------------------------------
+* SUPPLY POWER
+*--------------------------------------------------------
+
+let psupply = 1.8*abs(i(VDD))
+
+*--------------------------------------------------------
+* ENERGY OVER ONE COMPLETE CLOCK CYCLE
+*
+* Target clock cycle:
+*
+*      12 ns ---------------- 22 ns
+*
+* Tclock = 10 ns
+*--------------------------------------------------------
+
+meas tran Ecycle integ psupply from=12n to=22n
+
+*--------------------------------------------------------
+* AVERAGE FALL POWER
+*--------------------------------------------------------
+
+let Pfall = Ecycle/10n
+
+*--------------------------------------------------------
+* PRINT RESULTS
+*--------------------------------------------------------
+
+print Ecycle
+print Pfall
+
+.endc
+
+.end

@@ -1,0 +1,103 @@
+library (d_ff){
+  technology : cmos ;
+  delay_model : table_lookup ;
+  bus_naming_style : "%s-%d" ;
+  time_unit : "1ns" ;
+  voltage_unit : "1V" ;
+  leakage_power_unit : "1nW" ;
+  current_unit : "1uA" ;
+  pulling_resistance_unit : "1uA" ;
+  capacitive_load_unit (1, pF);
+  nom_process : 1.00 ;
+  nom_voltage : 1.80 ;
+  nom_temperature : 25 ;
+  slew_upper_threshold_pct_rise : 0.80 ;
+  slew_lower_threshold_pct_rise : 0.20 ;
+  slew_upper_threshold_pct_fall : 0.80 ;
+  slew_lower_threshold_pct_fall : 0.20 ;
+  input_threshold_pct_rise : 0.50 ;
+  input_threshold_pct_fall : 0.50 ;
+  output_threshold_pct_rise : 0.50 ;
+  output_threshold_pct_fall : 0.50 ;
+  operating_conditions (typical) {
+    process : 1.00 ;
+    voltage : 1.80 ;
+    temperature : 25 ;
+  } /* end operating_conditions */
+  lu_table_template (setup_template_1x1) {
+    variable_1 : related_pin_transition ;
+    variable_2 : constrained_pin_transition ;
+    index_1 ("1.0");
+    index_2 ("1.0");
+  } /* end lu_table_template */
+  lu_table_template (hold_template_1x1) {
+    variable_1 : related_pin_transition ;
+    variable_2 : constrained_pin_transition ;
+    index_1 ("1.0");
+    index_2 ("1.0");
+  } /* end lu_table_template */
+  cell (d_ff) {
+    area : 0.00 ;
+    ff (IQ, IQinv) {
+      next_state : DIN ;
+      clocked_on : CLK ;
+    } /* end ff */
+    pin (DIN) {
+      direction : input ;
+      capacitance : 0.002048 ;
+      timing () {
+        related_pin : CLK ;
+        timing_type : setup_rising ;
+        fall_constraint (setup_template_1x1) {
+          index_1 ("0.500000") ;
+          index_2 ("0.500000") ;
+          values ( \
+            "1.764894" \
+          ) ;
+        } /* end fall_constraint */
+        rise_constraint (setup_template_1x1) {
+          index_1 ("0.500000") ;
+          index_2 ("0.500000") ;
+          values ( \
+            "0.658298" \
+          ) ;
+        } /* end rise_constraint */
+      } /* end timing */
+      timing () {
+        related_pin : CLK ;
+        timing_type : hold_rising ;
+        fall_constraint (hold_template_1x1) {
+          index_1 ("0.500000") ;
+          index_2 ("0.500000") ;
+          values ( \
+            "-1.748055" \
+          ) ;
+        } /* end fall_constraint */
+        rise_constraint (hold_template_1x1) {
+          index_1 ("0.500000") ;
+          index_2 ("0.500000") ;
+          values ( \
+            "-0.653496" \
+          ) ;
+        } /* end rise_constraint */
+      } /* end timing */
+    } /* end pin */
+    pin (CLK) {
+      direction : input ;
+      clock : true ;
+      capacitance : 0.005585 ;
+    } /* end pin */
+    pin (Q) {
+      direction : output ;
+      function : "Q = DIN" ;
+    } /* end pin */
+    pg_pin (VDD) {
+      voltage_name : VDD ;
+      pg_type : primary_power ;
+    } /* end pg_pin */
+    pg_pin (VSS) {
+      voltage_name : VSS ;
+      pg_type : primary_ground ;
+    } /* end pg_pin */
+  } /* end cell */
+} /* end library */

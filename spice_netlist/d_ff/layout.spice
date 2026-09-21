@@ -1,0 +1,49 @@
+* NGSPICE file created from d_ff.ext - technology: sky130A
+
+.subckt d_ff
+X0 a_850_n252# a_90_n458# a_1794_n458# VDD sky130_fd_pr__pfet_01v8 ad=0.378 pd=3.12 as=0.378 ps=3.12 w=1.26 l=0.15
+**devattr s=15120,624 d=15120,624
+X1 a_3383_n458# a_2758_n252# VDD VDD sky130_fd_pr__pfet_01v8 ad=0.378 pd=3.12 as=0.378 ps=3.12 w=1.26 l=0.15
+**devattr s=15120,624 d=15120,624
+X2 a_530_n458# DIN VSS VSS sky130_fd_pr__nfet_01v8 ad=0.126 pd=1.44 as=0.126 ps=1.44 w=0.42 l=0.15
+**devattr s=5040,288 d=5040,288
+X3 a_850_n252# CLK a_1794_n458# VSS sky130_fd_pr__nfet_01v8 ad=0.126 pd=1.44 as=0.126 ps=1.44 w=0.42 l=0.15
+**devattr s=5040,288 d=5040,288
+X4 a_3699_n458# a_3383_n458# VSS VSS sky130_fd_pr__nfet_01v8 ad=0.126 pd=1.44 as=0.126 ps=1.44 w=0.42 l=0.15
+**devattr s=5040,288 d=5040,288
+X5 a_850_n252# CLK a_530_n458# VDD sky130_fd_pr__pfet_01v8 ad=0.378 pd=3.12 as=0.378 ps=3.12 w=1.26 l=0.15
+**devattr s=15120,624 d=15120,624
+X6 a_2758_n252# CLK a_3699_n458# VDD sky130_fd_pr__pfet_01v8 ad=0.378 pd=3.12 as=0.378 ps=3.12 w=1.26 l=0.15
+**devattr s=15120,624 d=15120,624
+X7 a_90_n458# CLK VSS VSS sky130_fd_pr__nfet_01v8 ad=0.126 pd=1.44 as=0.126 ps=1.44 w=0.42 l=0.15
+**devattr s=5040,288 d=5040,288
+X8 a_850_n252# a_90_n458# a_530_n458# VSS sky130_fd_pr__nfet_01v8 ad=0.126 pd=1.44 as=0.126 ps=1.44 w=0.42 l=0.15
+**devattr s=5040,288 d=5040,288
+X9 a_1477_n458# a_850_n252# VDD VDD sky130_fd_pr__pfet_01v8 ad=0.378 pd=3.12 as=0.378 ps=3.12 w=1.26 l=0.15
+**devattr s=15120,624 d=15120,624
+X10 Q a_3383_n458# VDD VDD sky130_fd_pr__pfet_01v8 ad=0.378 pd=3.12 as=0.378 ps=3.12 w=1.26 l=0.15
+**devattr s=15120,624 d=15120,624
+X11 a_1794_n458# a_1477_n458# VSS VSS sky130_fd_pr__nfet_01v8 ad=0.126 pd=1.44 as=0.126 ps=1.44 w=0.42 l=0.15
+**devattr s=5040,288 d=5040,288
+X12 a_530_n458# DIN VDD VDD sky130_fd_pr__pfet_01v8 ad=0.378 pd=3.12 as=0.378 ps=3.12 w=1.26 l=0.15
+**devattr s=15120,624 d=15120,624
+X13 a_3699_n458# a_3383_n458# VDD VDD sky130_fd_pr__pfet_01v8 ad=0.378 pd=3.12 as=0.378 ps=3.12 w=1.26 l=0.15
+**devattr s=15120,624 d=15120,624
+X14 a_90_n458# CLK VDD VDD sky130_fd_pr__pfet_01v8 ad=0.378 pd=3.12 as=0.378 ps=3.12 w=1.26 l=0.15
+**devattr s=15120,624 d=15120,624
+X15 a_2758_n252# a_90_n458# a_3699_n458# VSS sky130_fd_pr__nfet_01v8 ad=0.126 pd=1.44 as=0.126 ps=1.44 w=0.42 l=0.15
+**devattr s=5040,288 d=5040,288
+X16 a_3383_n458# a_2758_n252# VSS VSS sky130_fd_pr__nfet_01v8 ad=0.126 pd=1.44 as=0.126 ps=1.44 w=0.42 l=0.15
+**devattr s=5040,288 d=5040,288
+X17 a_1794_n458# a_1477_n458# VDD VDD sky130_fd_pr__pfet_01v8 ad=0.378 pd=3.12 as=0.378 ps=3.12 w=1.26 l=0.15
+**devattr s=15120,624 d=15120,624
+X18 a_2758_n252# a_90_n458# a_1477_n458# VDD sky130_fd_pr__pfet_01v8 ad=0.378 pd=3.12 as=0.378 ps=3.12 w=1.26 l=0.15
+**devattr s=15120,624 d=15120,624
+X19 a_1477_n458# a_850_n252# VSS VSS sky130_fd_pr__nfet_01v8 ad=0.126 pd=1.44 as=0.126 ps=1.44 w=0.42 l=0.15
+**devattr s=5040,288 d=5040,288
+X20 a_2758_n252# CLK a_1477_n458# VSS sky130_fd_pr__nfet_01v8 ad=0.126 pd=1.44 as=0.126 ps=1.44 w=0.42 l=0.15
+**devattr s=5040,288 d=5040,288
+X21 Q a_3383_n458# VSS VSS sky130_fd_pr__nfet_01v8 ad=0.126 pd=1.44 as=0.126 ps=1.44 w=0.42 l=0.15
+**devattr s=5040,288 d=5040,288
+.ends
+

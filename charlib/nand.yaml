@@ -1,0 +1,37 @@
+settings:
+    lib_name: project1_nand
+
+    temperature: 25
+
+    units:
+        time: ns
+        capacitive_load: pF
+
+    named_nodes:
+        primary_power:
+            name: vdd
+            voltage: 1.8
+
+        primary_ground:
+            name: vss
+            voltage: 0
+    cell_defaults:
+        netlist: project1_nand_pex.spice
+        models:
+            - /usr/local/share/pdk/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+
+cells:
+    project1_nand:
+
+        inputs: [A, B]
+
+        outputs: [OUT]
+
+        functions:
+            - OUT = !(!A & B)
+
+        data_slews: [0.01, 0.05, 0.1, 0.2]
+
+        loads: [0.001, 0.005, 0.01, 0.05]
+
+        plots: none
