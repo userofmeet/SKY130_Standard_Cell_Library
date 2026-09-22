@@ -147,9 +147,6 @@ The following ASIC design flow was implemented:
 ## Course Information
 
 **EE671: VLSI Design (2026–27)**
-
 Department of Electrical Engineering
-
 Indian Institute of Technology Bombay
-
 **Instructor:** Prof. Laxmeesha Somappa
